@@ -1,0 +1,303 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News Checker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-top: #f5f7ff;
+      --bg-bottom: #eaf1ff;
+      --ink: #10203a;
+      --muted: #4f607a;
+      --primary: #1f4b99;
+      --primary-2: #2f6ce0;
+      --card: rgba(255, 255, 255, 0.86);
+      --stroke: rgba(16, 32, 58, 0.12);
+      --success-bg: #e9f8ef;
+      --success-ink: #0f6a3b;
+      --danger-bg: #fdecec;
+      --danger-ink: #9e1c1c;
+      --warn-bg: #fff4df;
+      --warn-ink: #8a5a00;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Manrope", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 450px at 8% -10%, rgba(47, 108, 224, 0.22), transparent 60%),
+        radial-gradient(600px 300px at 100% 10%, rgba(31, 75, 153, 0.16), transparent 52%),
+        linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+      display: flex;
+      flex-direction: column;
+    }
+
+    .shell {
+      width: min(860px, 94%);
+      margin: 22px auto 20px;
+      flex: 1;
+      display: grid;
+      gap: 14px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1px solid var(--stroke);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.64);
+      backdrop-filter: blur(8px);
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      color: var(--primary);
+    }
+
+    .tag {
+      font-size: 0.83rem;
+      color: var(--muted);
+      border: 1px solid var(--stroke);
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .card {
+      border: 1px solid var(--stroke);
+      border-radius: 20px;
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 22px 55px rgba(21, 37, 65, 0.14);
+      overflow: hidden;
+      animation: rise-in 500ms ease both;
+    }
+
+    .hero {
+      padding: clamp(18px, 4vw, 28px);
+      border-bottom: 1px solid var(--stroke);
+      background: linear-gradient(110deg, rgba(31, 75, 153, 0.09), rgba(47, 108, 224, 0.04));
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.2rem, 3.3vw, 1.7rem);
+      line-height: 1.2;
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: clamp(0.9rem, 2vw, 0.98rem);
+      line-height: 1.45;
+      max-width: 60ch;
+    }
+
+    .content {
+      padding: clamp(18px, 4vw, 28px);
+    }
+
+    label {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 190px;
+      resize: vertical;
+      border: 1px solid var(--stroke);
+      border-radius: 14px;
+      padding: 14px;
+      font: inherit;
+      color: var(--ink);
+      line-height: 1.5;
+      background: rgba(255, 255, 255, 0.92);
+      transition: box-shadow .2s ease, border-color .2s ease, transform .15s ease;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: rgba(47, 108, 224, 0.52);
+      box-shadow: 0 0 0 4px rgba(47, 108, 224, 0.16);
+      transform: translateY(-1px);
+    }
+
+    .actions {
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 22px;
+      font: inherit;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(31, 75, 153, 0.3);
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(31, 75, 153, 0.32);
+      filter: brightness(1.03);
+    }
+
+    button[disabled] {
+      opacity: 0.9;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 10px 22px rgba(31, 75, 153, 0.24);
+    }
+
+    .result {
+      margin-top: 18px;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+      animation: fade-in 320ms ease both;
+    }
+
+    .result.real {
+      background: var(--success-bg);
+      color: var(--success-ink);
+      border-color: rgba(15, 106, 59, 0.2);
+    }
+
+    .result.fake {
+      background: var(--danger-bg);
+      color: var(--danger-ink);
+      border-color: rgba(158, 28, 28, 0.2);
+    }
+
+    .result.other {
+      background: var(--warn-bg);
+      color: var(--warn-ink);
+      border-color: rgba(138, 90, 0, 0.18);
+    }
+
+    .confidence {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.93rem;
+      font-weight: 600;
+    }
+
+    footer {
+      width: min(860px, 94%);
+      margin: 0 auto 16px;
+      text-align: center;
+      color: #657899;
+      font-size: 0.84rem;
+    }
+
+    @keyframes rise-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 10px 12px;
+      }
+
+      .actions {
+        align-items: stretch;
+      }
+
+      button {
+        width: 100%;
+      }
+
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">News Checker</div>
+      <div class="tag">AI Verification</div>
+    </header>
+
+    <section class="card">
+      <div class="hero">
+        <h1>Real or fake in one click</h1>
+        <p class="subtitle">Paste text and get a quick prediction with confidence.</p>
+      </div>
+
+      <div class="content">
+        <form method="POST" id="predictForm">
+          <label for="news">News Text</label>
+          <textarea id="news" name="news" placeholder="Paste headline or article content here..."></textarea>
+
+          <div class="actions">
+            <button type="submit" id="analyzeBtn">Analyze</button>
+          </div>
+        </form>
+
+        {% if result %}
+          {% if "Real" in result %}
+            <div class="result real">Result: {{ result }}</div>
+          {% elif "Fake" in result %}
+            <div class="result fake">Result: {{ result }}</div>
+          {% else %}
+            <div class="result other">Result: {{ result }}</div>
+          {% endif %}
+
+          {% if confidence %}
+            <div class="confidence">Confidence: {{ confidence }}</div>
+          {% endif %}
+        {% endif %}
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2026 News Checker</footer>
+  <script>
+    const form = document.getElementById("predictForm");
+    const button = document.getElementById("analyzeBtn");
+    const defaultText = "Analyze";
+
+    form.addEventListener("submit", function () {
+      button.disabled = true;
+      button.textContent = "Analyzing...";
+    });
+
+    window.addEventListener("pageshow", function () {
+      button.disabled = false;
+      button.textContent = defaultText;
+    });
+  </script>
+</body>
+</html>
+
